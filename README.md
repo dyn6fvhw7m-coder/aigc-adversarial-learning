@@ -53,4 +53,6 @@ python .\cnnspot_demo\predict_samples.py --data-root "D:\2026lw\AIGI_test\progan
 
 脚本会暂存未被忽略的文件，检查上传内容，生成提交并推送。出现网络、身份验证或远端冲突时会停止并显示错误；不会强制覆盖远端历史。首次身份验证由本人完成。
 
+当前首次发布已使用登录的 GitHub Desktop 完成；命令行 Git 尚未完成独立身份验证。因此目前直接使用 GitHub Desktop 的同步流程最方便。若脚本因身份验证停止，本地提交仍保留，可以在 GitHub Desktop 中点击 Push origin 上传。
+
 也可以在 GitHub Desktop 中打开这个本地仓库，查看差异、提交并点击 Push origin。保存文件本身不会自动推送；由助手完成的后续代码修改将按已授权的流程检查、提交、推送。
