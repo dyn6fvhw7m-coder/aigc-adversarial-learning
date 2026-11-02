@@ -31,6 +31,7 @@ requirements_source: user_provided_teacher_screenshots
 | PGD | 已运行并评估 | 同批 400 张，老师示例的 eps=8/255、alpha=2/255、4 步，成功 400/400。另完成扰动上限、步数和步长对照。 |
 | 随机种子与重复性 | 已进行学习和验证 | 明确 seed 的含义；固定 seed 与确定性设置后，小样本 PGD 重复运行对抗张量一致。该结论限定当时环境与配置。 |
 | AutoAttack 单组件 | APGD-CE、FAB-T、Square 已分别运行 | 400 张、eps=8/255 时，分别成功 400、392、398 张；这些是单组件结果。 |
+| APGD-T-Margin 二分类改造 | 已完成 2 张及 20 张小样本检查 | 继承原库 APGDT 搜索流程，将损失替换为目标分数减原始标签分数。固定 20 张、eps=8/255、10 步、1 轮、seed=2026，成功 20/20；目标方向、输入梯度和扰动上限检查通过。属于自定义改造。 |
 | 多攻击组合机制 | 已验证 | 20 张 FGSM→PGD：第一阶段成功 15 张，第二阶段接手并成功 5 张。 |
 | 二分类自定义组合 | 已运行小样本流程 | 20 张 APGD-CE→FAB-T→Square：第一阶段全部成功，后两阶段跳过；不含 APGD-T，不能标作完整标准 AutoAttack。 |
 | 完整标准 AutoAttack | 尚未完成 | 本地 standard 含 APGDT；其 targeted DLR 读取第 3、4 个类别分数，当前二分类输出不兼容。当前自定义组合的组件和预算也与 standard 不同。 |
@@ -78,6 +79,8 @@ requirements_source: user_provided_teacher_screenshots
 
 当前可准确汇报为：已完成原库组件实验和二分类自定义组合；完整原版 standard 与当前二分类模型不兼容。可继续研究作者提出的 margin 替代损失，但需单独命名、验证和报告修改。若老师要求具体评测协议，应明确二分类场景采用的组件、损失、预算和评测口径。
 
+现已实现 [attack_apgdt_margin.py](attack_apgdt_margin.py) 并完成独立的 2 张和 20 张检查。20 张结果：[汇总](apgdt_margin_eps8_20samples_seed2026/summary.json)、[逐图记录](apgdt_margin_eps8_20samples_seed2026/apgdt_margin_comparison.csv)。所有目标均为原始标签的另一类；返回图片均被判为目标类，目标 margin 为正，记录的像素输入梯度非零，L∞ 不超过 eps 加浮点容差。该检查支持本次小样本上的实现有效性，不构成完整标准 AutoAttack 已完成的证据；尚未作为第四组件加入现有组合。
+
 两项容易误报的情况：
 
 - 第一阶段已经全部成功会使后续组件跳过，整个调用正常结束不等于 APGDT 被执行且兼容。
@@ -85,7 +88,7 @@ requirements_source: user_provided_teacher_screenshots
 
 ## 六、可以向老师汇报的进度摘要
 
-已使用基准仓库的 CNNSpot 权重完成正常预测、FGSM 和 PGD 攻击，并进行了固定图片名单、随机种子、扰动范围及参数对照检查。已独立运行 APGD-CE、FAB-T、Square，并验证 MultiAttack 的阶段接力和提前停止。当前待解决的是标准 AutoAttack 中 APGDT 的 targeted DLR 与二分类输出的兼容问题；目前跑通的三组件组合已标注为二分类自定义组合。现有结果针对一个检测器和有限子集，尚未完成基准中的多模型系统对比。
+已使用基准仓库的 CNNSpot 权重完成正常预测、FGSM 和 PGD 攻击，并进行了固定图片名单、随机种子、扰动范围及参数对照检查。已独立运行 APGD-CE、FAB-T、Square，并验证 MultiAttack 的阶段接力和提前停止。标准 AutoAttack 中 APGDT 的 targeted DLR 与二分类输出不兼容；已按 margin 替代方向实现 APGD-T-Margin 自定义改造，完成 20 张独立检查。目前跑通的三组件组合及 margin 改造均明确标注为自定义方案。现有结果针对一个检测器和有限子集，尚未完成基准中的多模型系统对比。
 
 ## 原始结果入口
 
