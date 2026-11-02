@@ -1,0 +1,3 @@
+﻿relative_path,true_label,clean_logit,clean_probability,clean_prediction,clean_correct,clean_cross_entropy,adv_probability,adv_prediction,adv_correct,attack_success,linf_pixel,negligible_change
+0_real\00049.png,0,-19.205760955810547,4.560831268207721e-09,0,True,0.0,0.5011114478111267,1,False,True,0.0004531443119049072,False
+1_fake\00049.png,1,44.382328033447266,1.0,1,True,0.0,0.4942183196544647,0,False,True,0.00040203332901000977,False

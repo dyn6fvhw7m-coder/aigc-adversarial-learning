@@ -1,0 +1,3 @@
+﻿filename,true_label,fake_probability,predicted_label,correct
+real.png,0,1.6975414400977745e-14,0,True
+fake.png,1,0.999985933303833,1,True

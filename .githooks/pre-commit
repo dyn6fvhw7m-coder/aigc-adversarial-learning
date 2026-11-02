@@ -1,0 +1,2 @@
+#!/bin/sh
+exec python -X utf8 tools/check_upload.py

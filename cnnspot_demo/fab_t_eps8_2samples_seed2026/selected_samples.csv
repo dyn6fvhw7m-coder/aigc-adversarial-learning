@@ -1,0 +1,3 @@
+﻿filename,relative_path,true_label,fake_probability,predicted_label,correct
+00049.png,0_real\00049.png,0,4.560830824118511e-09,0,True
+00049.png,1_fake\00049.png,1,1.0,1,True

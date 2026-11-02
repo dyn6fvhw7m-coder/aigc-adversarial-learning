@@ -1,0 +1,21 @@
+﻿relative_path,true_label,clean_logit,clean_probability,clean_prediction,clean_correct,clean_cross_entropy,adv_probability,adv_prediction,adv_correct,attack_success,linf_pixel,negligible_change,apgd_ce_attempted,apgd_ce_new_success,fab_t_attempted,fab_t_new_success,square_attempted,square_new_success,stage_remaining_counts,successful_stage
+0_real\00049.png,0,-19.205760955810547,4.560831268207721e-09,0,True,0.0,1.0,1,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+0_real\00069.png,0,-23.661630630493164,5.295224675405663e-11,0,True,0.0,1.0,1,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+0_real\00253.png,0,-34.47040557861328,1.0707623007114205e-15,0,True,0.0,1.0,1,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+0_real\00296.png,0,-25.97332763671875,5.24719417221986e-12,0,True,0.0,1.0,1,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+0_real\00305.png,0,-30.769203186035156,4.336155458133095e-14,0,True,0.0,1.0,1,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+0_real\00335.png,0,-28.894912719726562,2.8255227476313427e-13,0,True,0.0,1.0,1,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+0_real\00519.png,0,-33.60253143310547,2.5503867697877812e-15,0,True,0.0,1.0,1,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+0_real\00642.png,0,-26.31689453125,3.721499237246961e-12,0,True,0.0,1.0,1,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+0_real\00728.png,0,-28.96599578857422,2.631648425652916e-13,0,True,0.0,1.0,1,False,True,0.03137257695198059,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+0_real\00771.png,0,-39.81984329223633,5.087000707752591e-18,0,True,0.0,1.0,1,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+1_fake\00049.png,1,44.382328033447266,1.0,1,True,0.0,0.0,0,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+1_fake\00069.png,1,18.4597110748291,1.0,1,True,0.0,0.0,0,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+1_fake\00253.png,1,43.88737106323242,1.0,1,True,0.0,0.0,0,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+1_fake\00296.png,1,39.800865173339844,1.0,1,True,0.0,0.0,0,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+1_fake\00305.png,1,38.828529357910156,1.0,1,True,0.0,0.0,0,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+1_fake\00335.png,1,30.5955753326416,1.0,1,True,0.0,0.0,0,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+1_fake\00519.png,1,29.842931747436523,1.0,1,True,0.0,0.0,0,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+1_fake\00642.png,1,30.60459327697754,1.0,1,True,0.0,0.0,0,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+1_fake\00728.png,1,33.33412551879883,1.0,1,True,0.0,0.0,0,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE
+1_fake\00771.png,1,49.49702835083008,1.0,1,True,0.0,0.0,0,False,True,0.03137260675430298,False,1,1,0,0,0,0,"[1, 0]",APGD-CE

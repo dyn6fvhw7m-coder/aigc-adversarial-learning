@@ -1,0 +1,3 @@
+﻿relative_path,true_label,target_label,clean_probability,clean_prediction,clean_correct,adv_probability,adv_prediction,adv_correct,attack_attempted,attack_success,clean_target_margin,adv_target_margin,linf_pixel,max_abs_margin_gradient_pixel,adapter_probability_error
+0_real\00049.png,0,1,4.560831268207721e-09,0,True,1.0,1,False,True,True,-19.205760955810547,181.7489013671875,0.03137260675430298,14.991632461547852,4.440892098500626e-16
+1_fake\00049.png,1,0,1.0,1,True,0.0,0,False,True,True,-44.382328033447266,247.41180419921875,0.03137260675430298,57.4964485168457,0.0

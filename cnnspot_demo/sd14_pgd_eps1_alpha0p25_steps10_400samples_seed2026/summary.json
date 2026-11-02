@@ -1,0 +1,58 @@
+{
+  "seed": 2026,
+  "alpha_pixel": 0.000980392156862745,
+  "steps": 10,
+  "random_start": true,
+  "attack": "pgd",
+  "mode": "untargeted",
+  "eps_pixel": 0.00392156862745098,
+  "output_adapter": "[-z/2,z/2]; softmax fake probability equals sigmoid(z)",
+  "data_root": "D:\\2026lw\\AIGI_test\\stable_diffusion_v_1_4",
+  "baseline_manifest": "C:\\Users\\xuan\\Desktop\\2026lw\\cnnspot_demo\\baseline_sd14_200perclass.csv",
+  "weight_path": "C:\\Users\\xuan\\Desktop\\2026lw\\AIGCDetectBenchmark-main\\AIGCDetectBenchmark-main\\weights\\classifier\\CNNSpot.pth",
+  "torch_version": "2.11.0+cu128",
+  "torchattacks_version": "3.5.1",
+  "sample_count": 400,
+  "clean_correct_count": 191,
+  "attack_success_count": 190,
+  "attack_scope": "originally_correct_only",
+  "attack_attempted_count": 191,
+  "skipped_clean_incorrect_count": 209,
+  "class_statistics": [
+    {
+      "label": 0,
+      "sample_count": 200,
+      "clean_correct_count": 182,
+      "attack_attempted_count": 182,
+      "attack_success_count": 181,
+      "attack_success_rate_on_clean_correct": 0.9945054945054945
+    },
+    {
+      "label": 1,
+      "sample_count": 200,
+      "clean_correct_count": 9,
+      "attack_attempted_count": 9,
+      "attack_success_count": 9,
+      "attack_success_rate_on_clean_correct": 1.0
+    }
+  ],
+  "clean_accuracy": 0.4775,
+  "adversarial_accuracy": 0.0025,
+  "attack_success_rate_on_clean_correct": 0.9947643979057592,
+  "max_linf_pixel": 0.003921627998352051,
+  "max_adapter_probability_error": 8.940696716308594e-08,
+  "negligible_change_count": 0,
+  "negligible_change_scope": "attempted_images_only",
+  "unchanged_return_count": 209,
+  "normalization_mean": [
+    0.485,
+    0.456,
+    0.406
+  ],
+  "normalization_std": [
+    0.229,
+    0.224,
+    0.225
+  ],
+  "notes": "只对本次固定名单成立；仅攻击原本预测正确的图片，原本预测错误的图片保留原图。攻击成功率以原本预测正确的图片为分母；攻击后准确率以整份名单为分母。negligible_change_count 只统计实际尝试攻击的图片。PNG 为量化预览，浮点张量保存在 pgd_images.pt。"
+}

@@ -1,0 +1,10 @@
+.spyproject/
+weights/
+results/
+resources/
+__pycache__/
+ checkpoints/
+.jpg
+.png
+.webp
+.jpeg

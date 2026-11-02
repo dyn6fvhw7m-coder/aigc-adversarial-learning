@@ -1,0 +1,106 @@
+{
+  "attack": "CustomBinaryEnsemble(APGD-CE,FAB-T,Square)",
+  "mode": "untargeted",
+  "eps_pixel": 0.03137254901960784,
+  "attack_order": [
+    "APGD-CE",
+    "FAB-T",
+    "Square"
+  ],
+  "norm": "Linf",
+  "seed": 2026,
+  "component_parameters": [
+    {
+      "attack": "APGD-CE",
+      "norm": "Linf",
+      "eps_pixel": 0.03137254901960784,
+      "steps": 10,
+      "n_restarts": 1,
+      "seed": 2026,
+      "loss": "ce",
+      "eot_iter": 1,
+      "rho": 0.75
+    },
+    {
+      "attack": "FAB-T",
+      "norm": "Linf",
+      "eps_pixel": 0.03137254901960784,
+      "steps": 10,
+      "n_restarts": 1,
+      "seed": 2026,
+      "alpha_max": 0.1,
+      "eta": 1.05,
+      "beta": 0.9,
+      "multi_targeted": true,
+      "n_classes": 2
+    },
+    {
+      "attack": "Square",
+      "norm": "Linf",
+      "eps_pixel": 0.03137254901960784,
+      "n_queries": 1000,
+      "n_restarts": 1,
+      "seed": 2026,
+      "p_init": 0.8,
+      "loss": "margin",
+      "resc_schedule": true
+    }
+  ],
+  "standard_autoattack": false,
+  "omitted_component": "APGD-T: 当前库的 targeted DLR 需要至少四个类别分数，与当前二分类输出不兼容。",
+  "deterministic_algorithms": true,
+  "cudnn_deterministic": true,
+  "cudnn_benchmark": false,
+  "stage_statistics": [
+    {
+      "attack": "APGD-CE",
+      "attempted_count": 20,
+      "new_success_count": 20,
+      "cumulative_success_count": 20,
+      "remaining_count": 0,
+      "executed": true
+    },
+    {
+      "attack": "FAB-T",
+      "attempted_count": 0,
+      "new_success_count": 0,
+      "cumulative_success_count": 20,
+      "remaining_count": 0,
+      "executed": false
+    },
+    {
+      "attack": "Square",
+      "attempted_count": 0,
+      "new_success_count": 0,
+      "cumulative_success_count": 20,
+      "remaining_count": 0,
+      "executed": false
+    }
+  ],
+  "output_adapter": "[-z/2,z/2]; softmax fake probability equals sigmoid(z)",
+  "data_root": "D:\\2026lw\\AIGI_test\\progan\\airplane",
+  "baseline_manifest": "C:\\Users\\xuan\\Desktop\\2026lw\\cnnspot_demo\\baseline_progan_airplane_10perclass.csv",
+  "weight_path": "C:\\Users\\xuan\\Desktop\\2026lw\\AIGCDetectBenchmark-main\\AIGCDetectBenchmark-main\\weights\\classifier\\CNNSpot.pth",
+  "torch_version": "2.11.0+cu128",
+  "torchattacks_version": "3.5.1",
+  "sample_count": 20,
+  "clean_correct_count": 20,
+  "attack_success_count": 20,
+  "clean_accuracy": 1.0,
+  "adversarial_accuracy": 0.0,
+  "attack_success_rate_on_clean_correct": 1.0,
+  "max_linf_pixel": 0.03137260675430298,
+  "max_adapter_probability_error": 4.440892098500626e-16,
+  "negligible_change_count": 0,
+  "normalization_mean": [
+    0.485,
+    0.456,
+    0.406
+  ],
+  "normalization_std": [
+    0.229,
+    0.224,
+    0.225
+  ],
+  "notes": "只对该固定小样本成立；这是 APGD-CE → FAB-T → Square 二分类自定义组合，并非完整标准 AutoAttack；省略 APGD-T，并采用本次记录的较小实验预算。每种攻击都从尚未成功样本的原图重新搜索，只攻击原本预测正确的图片。前面阶段全部成功时，后续阶段会跳过；跳过不等于后续组件已执行验证。n_queries 为每轮搜索预算参数，并非实际已用查询次数。PNG 为量化预览，浮点张量保存在 ensemble_images.pt。"
+}

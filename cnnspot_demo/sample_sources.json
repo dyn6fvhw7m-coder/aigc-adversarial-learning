@@ -1,0 +1,16 @@
+﻿[
+    {
+        "file":  "C:\\Users\\xuan\\Desktop\\2026lw\\cnnspot_demo\\test\\0_real\\real.png",
+        "label":  "0_real",
+        "url":  "https://raw.githubusercontent.com/peterwang512/CNNDetection/ea0b5622365e3a9cd31d1b54b6b5971131a839ab/examples/real.png",
+        "bytes":  82266,
+        "sha256":  "A2560A17F14006305580BA64D8BDC7D9128ADBEF5CE0F995396A267E23A587F9"
+    },
+    {
+        "file":  "C:\\Users\\xuan\\Desktop\\2026lw\\cnnspot_demo\\test\\1_fake\\fake.png",
+        "label":  "1_fake",
+        "url":  "https://raw.githubusercontent.com/peterwang512/CNNDetection/ea0b5622365e3a9cd31d1b54b6b5971131a839ab/examples/fake.png",
+        "bytes":  89892,
+        "sha256":  "7407A8A7BDA0C1F8295347D8B5751AD8B9B3847F9243AFDD362C2A923CDAFE2E"
+    }
+]

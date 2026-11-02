@@ -1,0 +1,42 @@
+{
+  "norm": "Linf",
+  "n_queries": 100,
+  "n_restarts": 1,
+  "p_init": 0.8,
+  "loss": "margin",
+  "resc_schedule": true,
+  "seed": 2026,
+  "deterministic_algorithms": true,
+  "cudnn_deterministic": true,
+  "cudnn_benchmark": false,
+  "query_budget_note": "n_queries 为每轮搜索预算参数，并非本脚本实际已用的模型查询次数。",
+  "attack": "Square",
+  "mode": "untargeted",
+  "eps_pixel": 0.03137254901960784,
+  "output_adapter": "[-z/2,z/2]; softmax fake probability equals sigmoid(z)",
+  "data_root": "D:\\2026lw\\AIGI_test\\progan\\airplane",
+  "baseline_manifest": "C:\\Users\\xuan\\Desktop\\2026lw\\cnnspot_demo\\baseline_progan_airplane_10perclass.csv",
+  "weight_path": "C:\\Users\\xuan\\Desktop\\2026lw\\AIGCDetectBenchmark-main\\AIGCDetectBenchmark-main\\weights\\classifier\\CNNSpot.pth",
+  "torch_version": "2.11.0+cu128",
+  "torchattacks_version": "3.5.1",
+  "sample_count": 20,
+  "clean_correct_count": 20,
+  "attack_success_count": 11,
+  "clean_accuracy": 1.0,
+  "adversarial_accuracy": 0.45,
+  "attack_success_rate_on_clean_correct": 0.55,
+  "max_linf_pixel": 0.03137260675430298,
+  "max_adapter_probability_error": 4.440892098500626e-16,
+  "negligible_change_count": 9,
+  "normalization_mean": [
+    0.485,
+    0.456,
+    0.406
+  ],
+  "normalization_std": [
+    0.229,
+    0.224,
+    0.225
+  ],
+  "notes": "只对该固定小样本成立；本实验为 Square 单组件，并非完整标准 AutoAttack。本库对未攻击成功的样本可能返回原图，零修改不代表未执行搜索。PNG 为量化预览，浮点张量保存在 square_images.pt。"
+}
