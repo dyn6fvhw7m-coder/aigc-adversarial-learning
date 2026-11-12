@@ -71,15 +71,71 @@ def make_stage_records(remaining, stage_names):
     ]
 
 
-def main():
-    parser = argparse.ArgumentParser(description="二分类自定义组合：APGD-CE → FAB-T → Square")
+def build_ensemble(model, eps, *, include_margin=False):
+    """构建三个原库组件；可在第二阶段加入已独立验证的二分类 margin 改造。"""
+    apgd_ce = torchattacks.APGD(
+        model, norm="Linf", eps=eps, steps=10, n_restarts=1,
+        seed=2026, loss="ce", eot_iter=1, rho=0.75, verbose=False,
+    )
+    fab_t = torchattacks.FAB(
+        model, norm="Linf", eps=eps, steps=10, n_restarts=1,
+        alpha_max=0.1, eta=1.05, beta=0.9, seed=2026,
+        multi_targeted=True, n_classes=2, verbose=False,
+    )
+    square = torchattacks.Square(
+        model, norm="Linf", eps=eps, n_queries=1000, n_restarts=1,
+        p_init=0.8, loss="margin", resc_schedule=True, seed=2026, verbose=False,
+    )
+    attacks = [apgd_ce, fab_t, square]
+    stage_names = ["APGD-CE", "FAB-T", "Square"]
+    stage_keys = ["apgd_ce", "fab_t", "square"]
+    parameters = [
+        {"attack": "APGD-CE", "norm": apgd_ce.norm, "eps_pixel": apgd_ce.eps,
+         "steps": apgd_ce.steps, "n_restarts": apgd_ce.n_restarts,
+         "seed": apgd_ce.seed, "loss": apgd_ce.loss, "eot_iter": apgd_ce.eot_iter,
+         "rho": apgd_ce.thr_decr},
+        {"attack": "FAB-T", "norm": fab_t.norm, "eps_pixel": fab_t.eps,
+         "steps": fab_t.steps, "n_restarts": fab_t.n_restarts,
+         "seed": fab_t.seed, "alpha_max": fab_t.alpha_max,
+         "eta": fab_t.eta, "beta": fab_t.beta,
+         "multi_targeted": fab_t.multi_targeted, "n_classes": fab_t.n_target_classes + 1},
+        {"attack": "Square", "norm": square.norm, "eps_pixel": square.eps,
+         "n_queries": square.n_queries, "n_restarts": square.n_restarts,
+         "seed": square.seed, "p_init": square.p_init, "loss": square.loss,
+         "resc_schedule": square.rescale_schedule},
+    ]
+    if include_margin:
+        from attack_apgdt_margin import BinaryAPGDTMargin
+
+        margin = BinaryAPGDTMargin(model, eps=eps, steps=10, seed=2026)
+        attacks.insert(1, margin)
+        stage_names.insert(1, "APGD-T-Margin")
+        stage_keys.insert(1, "apgdt_margin")
+        parameters.insert(1, {
+            "attack": "APGD-T-Margin", "norm": margin.norm, "eps_pixel": margin.eps,
+            "steps": margin.steps, "n_restarts": margin.n_restarts,
+            "seed": margin.seed, "n_classes": 2, "eot_iter": margin.eot_iter,
+            "rho": margin.thr_decr,
+            "loss": "target_logit - original_label_logit", "target_rule": "1 - label",
+            "implementation": "attack_apgdt_margin.BinaryAPGDTMargin",
+        })
+    atk = RecordedMultiAttack(attacks)
+    atk.set_normalization_used(mean=MEAN, std=STD)
+    return atk, stage_names, stage_keys, parameters
+
+
+def main(*, include_margin=False):
+    order = "APGD-CE → APGD-T-Margin → FAB-T → Square" if include_margin else "APGD-CE → FAB-T → Square"
+    default_output = ("ensemble_margin_eps8_20samples_seed2026" if include_margin
+                      else "ensemble_apgd_fab_square_eps8_seed2026")
+    parser = argparse.ArgumentParser(description=f"二分类自定义组合：{order}")
     parser.add_argument("--data-root", type=Path,
                         default=Path("D:/2026lw/AIGI_test/progan/airplane"))
     parser.add_argument("--baseline", type=Path,
                         default=DEMO_DIR / "baseline_progan_airplane_10perclass.csv")
     parser.add_argument("--eps", type=float, default=8 / 255)
     parser.add_argument("--output-dir", type=Path,
-                        default=DEMO_DIR / "ensemble_apgd_fab_square_eps8_seed2026")
+                        default=DEMO_DIR / default_output)
     args = parser.parse_args()
     if not 0 <= args.eps <= 1:
         parser.error("eps 应在 0 到 1 之间")
@@ -123,70 +179,8 @@ def main():
     torch.backends.cudnn.deterministic = True
     torch.use_deterministic_algorithms(True)
 
-    # 第一种攻击：APGD-CE
-    apgd_ce = torchattacks.APGD(
-        model,
-        norm="Linf",
-        eps=args.eps,
-        steps=10,
-        n_restarts=1,
-        seed=2026,
-        loss="ce",
-        eot_iter=1,
-        rho=0.75,
-        verbose=False,
-    )
-
-    # 第二种攻击：FAB-T
-    fab_t = torchattacks.FAB(
-        model,
-        norm="Linf",
-        eps=args.eps,
-        steps=10,
-        n_restarts=1,
-        alpha_max=0.1,
-        eta=1.05,
-        beta=0.9,
-        seed=2026,
-        multi_targeted=True,
-        n_classes=2,
-        verbose=False,
-    )
-
-    # 第三种攻击：Square
-    square = torchattacks.Square(
-        model,
-        norm="Linf",
-        eps=args.eps,
-        n_queries=1000,
-        n_restarts=1,
-        p_init=0.8,
-        loss="margin",
-        resc_schedule=True,
-        seed=2026,
-        verbose=False,
-    )
-
-    # 二分类自定义组合，记录每个阶段的结果
-    atk = RecordedMultiAttack([apgd_ce, fab_t, square])
-    atk.set_normalization_used(mean=MEAN, std=STD)
-    stage_names = ["APGD-CE", "FAB-T", "Square"]
-    stage_keys = ["apgd_ce", "fab_t", "square"]
-    component_parameters = [
-        {"attack": "APGD-CE", "norm": apgd_ce.norm, "eps_pixel": apgd_ce.eps,
-         "steps": apgd_ce.steps, "n_restarts": apgd_ce.n_restarts,
-         "seed": apgd_ce.seed, "loss": apgd_ce.loss, "eot_iter": apgd_ce.eot_iter,
-         "rho": apgd_ce.thr_decr},
-        {"attack": "FAB-T", "norm": fab_t.norm, "eps_pixel": fab_t.eps,
-         "steps": fab_t.steps, "n_restarts": fab_t.n_restarts,
-         "seed": fab_t.seed, "alpha_max": fab_t.alpha_max,
-         "eta": fab_t.eta, "beta": fab_t.beta,
-         "multi_targeted": fab_t.multi_targeted, "n_classes": fab_t.n_target_classes + 1},
-        {"attack": "Square", "norm": square.norm, "eps_pixel": square.eps,
-         "n_queries": square.n_queries, "n_restarts": square.n_restarts,
-         "seed": square.seed, "p_init": square.p_init, "loss": square.loss,
-         "resc_schedule": square.rescale_schedule},
-    ]
+    atk, stage_names, stage_keys, component_parameters = build_ensemble(
+        model, args.eps, include_margin=include_margin)
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     preview_dir = args.output_dir / "preview"
@@ -196,9 +190,14 @@ def main():
     maximum_adapter_error = 0.0
     print(f"计算设备：{device}；组合顺序：{' → '.join(stage_names)}；"
           f"扰动上限：{args.eps:.8f}", flush=True)
-    print(f"APGD-CE 步数：{apgd_ce.steps}；FAB-T 步数：{fab_t.steps}；"
-          f"Square 每轮查询预算参数：{square.n_queries}；随机种子：2026", flush=True)
-    print("实验类型：二分类自定义组合；不含 APGD-T，非完整标准 AutoAttack。", flush=True)
+    for component in component_parameters:
+        budget = (f"步数：{component['steps']}" if "steps" in component
+                  else f"每轮查询预算参数：{component['n_queries']}")
+        print(f"{component['attack']}：{budget}；重启轮数：{component['n_restarts']}；"
+              f"随机种子：{component['seed']}", flush=True)
+    print("实验类型：二分类自定义组合；非完整标准 AutoAttack。", flush=True)
+    if include_margin:
+        print("第二阶段以目标分数减原始标签分数替换 targeted DLR；目标类别为 1-label。", flush=True)
     print(f"固定图片数量：{len(samples)}；攻击库：{torchattacks.__file__}", flush=True)
 
     for index, sample in enumerate(samples, start=1):
@@ -220,7 +219,7 @@ def main():
             raise RuntimeError("适配前后的概率不一致")
         if abs(original_probability - float(sample["fake_probability"])) > 1e-5:
             raise RuntimeError("本次正常预测与先前记录不一致，请检查模型和预处理")
-        clean_prediction = int(clean_probability > 0.5)
+        clean_prediction = scores.argmax(dim=1).item()
         if clean_prediction != int(sample["predicted_label"]):
             raise RuntimeError("本次正常预测类别与先前记录不一致")
 
@@ -237,8 +236,9 @@ def main():
         sample_stages = make_stage_records(remaining, stage_names)
 
         with torch.no_grad():
-            adv_probability = model(adv_images).softmax(dim=1)[0, 1].item()
-        adv_prediction = int(adv_probability > 0.5)
+            adv_scores = model(adv_images)
+            adv_probability = adv_scores.softmax(dim=1)[0, 1].item()
+            adv_prediction = adv_scores.argmax(dim=1).item()
 
         # 返回值是标准化后的图片。先还原到像素空间，再检查范围和 L_inf。
         raw_clean = images * std + mean
@@ -319,13 +319,18 @@ def main():
     if cumulative_success != success_count:
         raise RuntimeError("组合阶段汇总与最终成功数量不一致")
     summary = {
-        "attack": "CustomBinaryEnsemble(APGD-CE,FAB-T,Square)",
+        "attack": "CustomBinaryEnsemble(" + ",".join(stage_names) + ")",
         "mode": "untargeted", "eps_pixel": args.eps,
         "attack_order": stage_names, "norm": "Linf", "seed": 2026,
         "component_parameters": component_parameters,
         "standard_autoattack": False,
-        "omitted_component": "APGD-T: 当前库的 targeted DLR 需要至少四个类别分数，"
-                             "与当前二分类输出不兼容。",
+        "omitted_component": (None if include_margin else
+                              "APGD-T: targeted DLR 与当前二分类输出不兼容。"),
+        "replacement_component": ({
+            "original": "APGD-T with targeted DLR",
+            "replacement": "APGD-T-Margin",
+            "reason": "targeted DLR 需要至少四个类别分数；当前输出为两个分数。",
+        } if include_margin else None),
         "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
         "cudnn_deterministic": torch.backends.cudnn.deterministic,
         "cudnn_benchmark": torch.backends.cudnn.benchmark,
@@ -343,8 +348,8 @@ def main():
         "max_adapter_probability_error": maximum_adapter_error,
         "negligible_change_count": sum(row["negligible_change"] for row in rows),
         "normalization_mean": MEAN, "normalization_std": STD,
-        "notes": "只对该固定小样本成立；这是 APGD-CE → FAB-T → Square 二分类自定义组合，"
-                 "并非完整标准 AutoAttack；省略 APGD-T，并采用本次记录的较小实验预算。"
+        "notes": f"只对该固定子集成立；这是 {order} 二分类自定义组合，"
+                 "并非完整标准 AutoAttack；组件、损失与预算以本次配置为准。"
                  "每种攻击都从尚未成功样本的原图重新搜索，只攻击原本预测正确的图片。"
                  "前面阶段全部成功时，后续阶段会跳过；跳过不等于后续组件已执行验证。"
                  "n_queries 为每轮搜索预算参数，并非实际已用查询次数。"
