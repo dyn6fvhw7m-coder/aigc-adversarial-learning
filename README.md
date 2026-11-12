@@ -41,8 +41,6 @@ python .\cnnspot_demo\predict_samples.py --data-root "D:\2026lw\AIGI_test\progan
 - `attack_ensemble.py` 是二分类自定义组合，省略 APGD-T，不能标为完整标准 AutoAttack。
 - `attack_apgdt_margin.py` 是 APGD-T-Margin 自定义损失改造；它与原版 targeted DLR 不同，也不是完整标准 AutoAttack。
 
-详细进度见 [老师要求与当前进度](cnnspot_demo/teacher_requirements_progress.md)，实验汇总见 `cnnspot_demo/实验日志/`。
-
 ## 后续同步
 
 在项目根目录执行：
